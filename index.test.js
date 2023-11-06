@@ -10,16 +10,27 @@ const app = require("./src/app");
 const seedMusician = require("./seedData");
 
 test("Musicians endpoint", async () => {
-  // Sends request to `/bakedGoods` endpoint
   const response = await request(app).get("/musicians");
   expect(response.statusCode).toBe(200);
 });
 
 test("Testing musicians json data", async () => {
-  // Sends request to `/bakedGoods` endpoint
   const response = await request(app).get("/musicians");
   const responseData = JSON.parse(response.text);
   expect(responseData[0].name).toEqual("Mick Jagger");
   expect(responseData[1].name).toEqual("Drake");
   expect(responseData[2].name).toEqual("Jimi Hendrix");
+});
+
+test("Bands endpoint", async () => {
+  const response = await request(app).get("/bands");
+  expect(response.statusCode).toBe(200);
+});
+
+test("Testing bands json data", async () => {
+  const response = await request(app).get("/bands");
+  const responseData = JSON.parse(response.text);
+  expect(responseData[0].name).toEqual("The Beatles");
+  expect(responseData[1].name).toEqual("Black Pink");
+  expect(responseData[2].name).toEqual("Coldplay");
 });
