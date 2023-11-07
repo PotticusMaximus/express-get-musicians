@@ -5,6 +5,8 @@ const { db } = require("../db/connection");
 
 const port = 3000;
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 //TODO: Create a GET /musicians route to return all musicians
 app.get("/musicians", async (req, res) => {
   const findMusician = await Musician.findAll();
@@ -26,9 +28,34 @@ app.get("/musicians/3", async (req, res) => {
   res.json(findMusician);
 });
 
+app.get("/musicians/:id", async (req, res) => {
+  const musicianId = req.params.id;
+  const findMusician = await Musician.findByPk({ where: { id: musicianId } });
+  res.json(findMusician);
+});
+
 app.get("/bands", async (req, res) => {
   const findBand = await Band.findAll();
   res.json(findBand);
+});
+
+app.post("/musicians", async (req, res) => {
+  const data = await Musician.create(req.body);
+  res.json(data);
+});
+
+app.put("/musicians/:id", async (req, res) => {
+  const musicianId = req.params.id;
+  const findMusician = await Musician.update(req.body, {
+    where: { id: musicianId },
+  });
+  res.json(findMusician);
+});
+
+app.delete("/musicians/:id", async (req, res) => {
+  const musicianId = req.params.id;
+  const findMusician = await Musician.destroy({ where: { id: musicianId } });
+  res.json(findMusician);
 });
 
 module.exports = app;

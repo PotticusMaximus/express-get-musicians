@@ -14,12 +14,38 @@ test("Musicians endpoint", async () => {
   expect(response.statusCode).toBe(200);
 });
 
-test("Testing musicians json data", async () => {
+test("Testing musicians routing", async () => {
   const response = await request(app).get("/musicians");
   const responseData = JSON.parse(response.text);
   expect(responseData[0].name).toEqual("Mick Jagger");
   expect(responseData[1].name).toEqual("Drake");
   expect(responseData[2].name).toEqual("Jimi Hendrix");
+});
+
+test("Testing musicians id endpoint", async () => {
+  const response = await request(app).get("/musicians/1");
+  const responseData = JSON.parse(response.text);
+  expect(responseData.name).toEqual("Mick Jagger");
+});
+
+test("Testing musicians create function", async () => {
+  const response = await request(app).post("/musicians").send({
+    name: "Fancy Pants",
+    instrument: "Harp",
+  });
+  expect(response.statusCode).toEqual(200);
+});
+//
+test("Testing musicians delete function", async () => {
+  const response = await request(app).delete("/musicians/1");
+  expect(response.statusCode).toEqual(200);
+});
+test("Testing musicians update function", async () => {
+  const response = await request(app).put("/musicians/1").send({
+    name: "Fancy Pants",
+    instrument: "Harp",
+  });
+  expect(response.statusCode).toEqual(200);
 });
 
 test("Bands endpoint", async () => {
