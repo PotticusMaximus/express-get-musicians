@@ -73,3 +73,27 @@ test("POST req throws error if fields are empty", async () => {
   //console.log(postNew.body);
   expect(postNew.body.error[0].msg).toBe("Invalid value");
 });
+//
+test("POST req throws error if fields are outised of 2-20 char limit", async () => {
+  const postNew = await request(app)
+    .post("/musicians")
+    .send({ name: "w", instrument: "w" });
+  //console.log(postNew.body);
+  expect(postNew.body.error[0].msg).toBe("Characters should be between 2-20");
+});
+//
+test("PUT req throws error if fields are empty", async () => {
+  const putNew = await request(app)
+    .put("/musicians/1")
+    .send({ name: "", instrument: "" });
+  //console.log(postNew.body);
+  expect(putNew.body.error[0].msg).toBe("Invalid value");
+});
+//
+test("PUT req throws error if fields are outised of 2-20 char limit", async () => {
+  const putNew = await request(app)
+    .put("/musicians/1")
+    .send({ name: "w", instrument: "w" });
+  //console.log(postNew.body);
+  expect(putNew.body.error[0].msg).toBe("Characters should be between 2-20");
+});

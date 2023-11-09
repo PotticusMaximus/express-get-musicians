@@ -22,24 +22,52 @@ musicianRouter.get("/:id", async (req, res) => {
   }
 });
 
-musicianRouter.put("/:id", async (req, res) => {
-  const id = req.params.id;
-  try {
-    const update = await Musician.update(req.body, {
-      where: { id: id },
-    });
-    const result = await Musician.findAll();
-    res.json(result);
-  } catch (error) {
-    res.status(500).send({ error: "Error ocurred during PUT request" });
+musicianRouter.put(
+  "/:id",
+  [
+    check("name").not().isEmpty().trim(),
+    check("instrument").not().isEmpty().trim(),
+    check("name", "Characters should be between 2-20").isLength({
+      min: 2,
+      max: 20,
+    }),
+    check("instrument", "Characters should be between 2-20").isLength({
+      min: 2,
+      max: 20,
+    }),
+  ],
+  async (req, res) => {
+    const id = req.params.id;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.json({ error: errors.array() });
+    } else {
+      try {
+        const update = await Musician.update(req.body, {
+          where: { id: id },
+        });
+        const result = await Musician.findAll();
+        res.json(result);
+      } catch (error) {
+        res.status(500).send({ error: "Error ocurred during PUT request" });
+      }
+    }
   }
-});
+);
 
 musicianRouter.post(
   "/",
   [
     check("name").not().isEmpty().trim(),
     check("instrument").not().isEmpty().trim(),
+    check("name", "Characters should be between 2-20").isLength({
+      min: 2,
+      max: 20,
+    }),
+    check("instrument", "Characters should be between 2-20").isLength({
+      min: 2,
+      max: 20,
+    }),
   ],
   async (req, res) => {
     const errors = validationResult(req);
