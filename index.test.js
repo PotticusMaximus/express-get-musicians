@@ -1,11 +1,16 @@
 const { execSync } = require("child_process");
 execSync("npm install");
 execSync("npm run seed");
+const syncSeed = require("./seed");
 
 const request = require("supertest");
 const app = require("./src/app");
 const musicianRouter = require("./routes/router");
 app.use("/musicians", musicianRouter);
+
+beforeEach(async () => {
+  await syncSeed();
+});
 
 test("Musicians endpoint", async () => {
   const response = await request(app).get("/musicians");
@@ -59,4 +64,12 @@ test("Testing bands json data", async () => {
   expect(responseData[0].name).toEqual("The Beatles");
   expect(responseData[1].name).toEqual("Black Pink");
   expect(responseData[2].name).toEqual("Coldplay");
+});
+//
+test("POST req throws error if fields are empty", async () => {
+  const postNew = await request(app)
+    .post("/musicians")
+    .send({ name: "", instrument: "hi" });
+  //console.log(postNew.body);
+  expect(postNew.body.error[0].msg).toBe("Invalid value");
 });
