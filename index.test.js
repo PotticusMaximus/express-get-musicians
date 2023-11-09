@@ -1,13 +1,11 @@
-// install dependencies
 const { execSync } = require("child_process");
 execSync("npm install");
 execSync("npm run seed");
 
 const request = require("supertest");
-const { db } = require("./db/connection");
-const { Musician } = require("./models/index");
 const app = require("./src/app");
-const seedMusician = require("./seedData");
+const musicianRouter = require("./routes/router");
+app.use("/musicians", musicianRouter);
 
 test("Musicians endpoint", async () => {
   const response = await request(app).get("/musicians");
@@ -23,9 +21,9 @@ test("Testing musicians routing", async () => {
 });
 
 test("Testing musicians id endpoint", async () => {
-  const response = await request(app).get("/musicians/1");
+  const response = await request(app).get("/musicians/2");
   const responseData = JSON.parse(response.text);
-  expect(responseData.name).toEqual("Mick Jagger");
+  expect(responseData.name).toEqual("Drake");
 });
 
 test("Testing musicians create function", async () => {
@@ -33,12 +31,14 @@ test("Testing musicians create function", async () => {
     name: "Fancy Pants",
     instrument: "Harp",
   });
-  expect(response.statusCode).toEqual(200);
+  const data = await request(app).get("/musicians");
+  expect(data.body[3].instrument).toEqual("Harp");
 });
 //
 test("Testing musicians delete function", async () => {
   const response = await request(app).delete("/musicians/1");
-  expect(response.statusCode).toEqual(200);
+  const data = await request(app).get("/musicians");
+  expect(data.body[0].name).toEqual("Drake");
 });
 test("Testing musicians update function", async () => {
   const response = await request(app).put("/musicians/1").send({
